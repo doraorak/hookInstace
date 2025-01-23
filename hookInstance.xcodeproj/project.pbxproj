@@ -23,7 +23,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		1428C6332D42E37900B612DC /* Exceptions for "hookInstance" folder in "Compile Sources" phase from "hookInstance" target */ = {
+		14E6B3392D42ED2900CE5729 /* Exceptions for "hookInstance" folder in "Compile Sources" phase from "hookInstance" target */ = {
 			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
 			buildPhase = 142F54092D413B2800B7E72C /* Sources */;
 			membershipExceptions = (
@@ -36,8 +36,11 @@
 		142F540F2D413B2800B7E72C /* hookInstance */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				1428C6332D42E37900B612DC /* Exceptions for "hookInstance" folder in "Compile Sources" phase from "hookInstance" target */,
+				14E6B3392D42ED2900CE5729 /* Exceptions for "hookInstance" folder in "Compile Sources" phase from "hookInstance" target */,
 			);
+			explicitFileTypes = {
+				hookInstance.h = sourcecode.c.h;
+			};
 			path = hookInstance;
 			sourceTree = "<group>";
 		};

@@ -19,7 +19,8 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     objc_registerClassPair(replacementClass);
     
     Method origMethod = class_getInstanceMethod([instance class], targetSEL);
-        
+    
+    if(origFp != NULL)
     *origFp = method_getImplementation(origMethod);
     
     char* typenc = method_getTypeEncoding(origMethod);
