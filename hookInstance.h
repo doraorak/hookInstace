@@ -1,5 +1,5 @@
 //
-//  main.m
+//  hookInstance.h
 //  hookInstance
 //
 //  Created by Dora Orak on 22.01.2025.
