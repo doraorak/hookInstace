@@ -32,6 +32,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
 
 
 void (*sbgcOrigOld)(id _self, SEL cmd, struct CGColor* color);
+void (*sbcOrigOld)(id _self, SEL cmd, CGColorRef clr);
 
 
 void sbgcHook(id _self, SEL cmd, struct CGColor* color){
@@ -50,6 +51,12 @@ void sbgcHook2(id _self, SEL cmd, struct CGColor* color){
    
 }
 
+void sbcHook(id _self, SEL cmd, CGColorRef clr){
+    
+    
+    sbcOrigOld(_self, cmd, NSColor.greenColor.CGColor);
+    
+}
 
 
 int main(int argc, const char * argv[]) {
@@ -81,11 +88,16 @@ int main(int argc, const char * argv[]) {
         
         hookInstance(IHview.layer, @selector(setBackgroundColor:), (IMP)sbgcHook, (IMP*)&sbgcOrigOld);
         hookInstance(IHview.layer, @selector(setBackgroundColor:), (IMP)sbgcHook2, (IMP*)&sbgcOrigOld);
+        hookInstance(IHview.layer, @selector(setBorderColor:), (IMP)sbcHook, (IMP*)&sbcOrigOld);
+
         hookInstance(otherIHview.layer, @selector(setBackgroundColor:), (IMP)sbgcHook, (IMP*)&sbgcOrigOld);
 
         IHview.layer.backgroundColor = [NSColor.blueColor CGColor];
         otherIHview.layer.backgroundColor = [NSColor.blueColor CGColor];
         otherview.layer.backgroundColor = [NSColor.blueColor CGColor];
+        
+        IHview.layer.borderWidth = 10;
+        IHview.layer.borderColor = NSColor.magentaColor.CGColor;
 
         [win.contentView addSubview:IHview];
         [win.contentView addSubview:otherIHview];
