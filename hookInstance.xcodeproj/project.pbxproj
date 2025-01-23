@@ -22,9 +22,22 @@
 		142F540D2D413B2800B7E72C /* hookInstance */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = hookInstance; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		1428C6332D42E37900B612DC /* Exceptions for "hookInstance" folder in "Compile Sources" phase from "hookInstance" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 142F54092D413B2800B7E72C /* Sources */;
+			membershipExceptions = (
+				hookInstance.h,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		142F540F2D413B2800B7E72C /* hookInstance */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1428C6332D42E37900B612DC /* Exceptions for "hookInstance" folder in "Compile Sources" phase from "hookInstance" target */,
+			);
 			path = hookInstance;
 			sourceTree = "<group>";
 		};
