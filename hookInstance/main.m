@@ -10,26 +10,44 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 
+
+Class clsHook(id self, SEL _cmd){
+
+    NSMutableString* className = [NSString stringWithCString:class_getName(object_getClass(self))];
+    NSMutableString* baseClassName = className;
+    
+    if([className containsString:@"_instanceHook_"]){
+        baseClassName = [NSMutableString stringWithString:[[className componentsSeparatedByString:@"_instanceHook_"] objectAtIndex:0]];
+    }
+    
+    return objc_getClass(baseClassName.cString);
+
+}
+
 void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     
-
-    char* replacementClassName = [[NSString stringWithFormat:@"%@_hook_", [instance class]] stringByAppendingString:[[NSUUID UUID] UUIDString]].cString;
+    char* replacementClassName = [[NSString stringWithFormat:@"%@_instanceHook_", object_getClass(instance)] stringByAppendingString:[[NSUUID UUID] UUIDString]].cString;
     
-    Class replacementClass = objc_allocateClassPair([instance class], replacementClassName, 0);
+    Class replacementClass = objc_allocateClassPair(object_getClass(instance), replacementClassName, 0);
     objc_registerClassPair(replacementClass);
     
-    Method origMethod = class_getInstanceMethod([instance class], targetSEL);
-        
+    Method origMethod = class_getInstanceMethod(object_getClass(instance), targetSEL);
+    
     if(origFp != NULL)
     *origFp = method_getImplementation(origMethod);
     
     const char* typenc = method_getTypeEncoding(origMethod);
         
     class_replaceMethod(replacementClass, targetSEL, replacementFp, typenc);
-    
+
+    //lie about the class
+    class_replaceMethod(replacementClass, @selector(class), (IMP)clsHook, "#16@0:8");
+ 
+    //apply hook
     object_setClass(instance, replacementClass);
 }
 
+//------------------TEST BEGIN--------------------------
 
 void (*sbgcOrigOld)(id _self, SEL cmd, struct CGColor* color);
 void (*sbcOrigOld)(id _self, SEL cmd, CGColorRef clr);
@@ -86,15 +104,19 @@ int main(int argc, const char * argv[]) {
         NSView* otherview = [[NSView alloc] initWithFrame:NSMakeRect(150, 0, 150, 200)];
         otherview.wantsLayer = YES;
         
+        hookInstance(IHview.layer, @selector(setBorderColor:), (IMP)sbcHook, (IMP*)&sbcOrigOld);
+
         hookInstance(IHview.layer, @selector(setBackgroundColor:), (IMP)sbgcHook, (IMP*)&sbgcOrigOld);
         hookInstance(IHview.layer, @selector(setBackgroundColor:), (IMP)sbgcHook2, (IMP*)&sbgcOrigOld);
-        hookInstance(IHview.layer, @selector(setBorderColor:), (IMP)sbcHook, (IMP*)&sbcOrigOld);
 
         hookInstance(otherIHview.layer, @selector(setBackgroundColor:), (IMP)sbgcHook, (IMP*)&sbgcOrigOld);
 
-        IHview.layer.backgroundColor = [NSColor.blueColor CGColor];
+        NSLog(@"cn:%@", [IHview.layer class]);
+        
         otherIHview.layer.backgroundColor = [NSColor.blueColor CGColor];
         otherview.layer.backgroundColor = [NSColor.blueColor CGColor];
+        IHview.layer.backgroundColor = [NSColor.blueColor CGColor];
+
         
         IHview.layer.borderWidth = 10;
         IHview.layer.borderColor = NSColor.magentaColor.CGColor;
