@@ -23,7 +23,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     if(origFp != NULL)
     *origFp = method_getImplementation(origMethod);
     
-    char* typenc = method_getTypeEncoding(origMethod);
+    const char* typenc = method_getTypeEncoding(origMethod);
         
     class_replaceMethod(replacementClass, targetSEL, replacementFp, typenc);
     
