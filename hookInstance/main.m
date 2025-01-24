@@ -60,7 +60,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     object_setClass(instance, replacementClass);
 }
 
-
+//------------------TEST BEGIN--------------------------
 
 void (*sbgcOrigOld)(id _self, SEL cmd, struct CGColor* color);
 void (*sbcOrigOld)(id _self, SEL cmd, CGColorRef clr);
