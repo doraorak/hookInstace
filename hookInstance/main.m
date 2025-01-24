@@ -10,11 +10,10 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 
-Class (*clsOrig)(id self, SEL _cmd);
 
 Class clsHook(id self, SEL _cmd){
 
-    NSMutableString* className = [NSString stringWithCString:class_getName(clsOrig(self, _cmd))];
+    NSMutableString* className = [NSString stringWithCString:class_getName(object_getClass(self))];
     NSMutableString* baseClassName = className;
     
     if([className containsString:@"_instanceHook_"]){
@@ -42,20 +41,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     class_replaceMethod(replacementClass, targetSEL, replacementFp, typenc);
 
     //lie about the class
-    NSMutableString* className = [NSString stringWithCString:class_getName(object_getClass(instance))];
-    NSMutableString* baseClassName = className;
-    
-    if([className containsString:@"_instanceHook_"]){
-        baseClassName = [NSMutableString stringWithString:[[className componentsSeparatedByString:@"_instanceHook_"] objectAtIndex:0]];
-    }
-    
-    Method clsOrigMethod = class_getInstanceMethod(objc_getClass(baseClassName.cString), @selector(class));
-    
-    *((IMP*)(&clsOrig)) = method_getImplementation(clsOrigMethod);
-
-    const char* clsTypenc = method_getTypeEncoding(clsOrigMethod);
-    
-    class_replaceMethod(replacementClass, @selector(class), (IMP)clsHook, clsTypenc);
+    class_replaceMethod(replacementClass, @selector(class), (IMP)clsHook, "#16@0:8");
  
     //apply hook
     object_setClass(instance, replacementClass);
