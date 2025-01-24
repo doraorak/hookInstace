@@ -27,12 +27,12 @@ Class clsHook(id self, SEL _cmd){
 
 void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     
-    char* replacementClassName = [[NSString stringWithFormat:@"%@_instanceHook_", [instance class]] stringByAppendingString:[[NSUUID UUID] UUIDString]].cString;
+    char* replacementClassName = [[NSString stringWithFormat:@"%@_instanceHook_", object_getClass(instance)] stringByAppendingString:[[NSUUID UUID] UUIDString]].cString;
     
     Class replacementClass = objc_allocateClassPair([instance class], replacementClassName, 0);
     objc_registerClassPair(replacementClass);
     
-    Method origMethod = class_getInstanceMethod([instance class], targetSEL);
+    Method origMethod = class_getInstanceMethod(object_getClass(instance), targetSEL);
     
     if(origFp != NULL)
     *origFp = method_getImplementation(origMethod);
@@ -42,7 +42,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     class_replaceMethod(replacementClass, targetSEL, replacementFp, typenc);
 
     //lie about the class
-    NSMutableString* className = [NSString stringWithCString:class_getName([instance class])];
+    NSMutableString* className = [NSString stringWithCString:class_getName(object_getClass(instance))];
     NSMutableString* baseClassName = className;
     
     if([className containsString:@"_instanceHook_"]){
