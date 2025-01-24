@@ -29,7 +29,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     
     char* replacementClassName = [[NSString stringWithFormat:@"%@_instanceHook_", object_getClass(instance)] stringByAppendingString:[[NSUUID UUID] UUIDString]].cString;
     
-    Class replacementClass = objc_allocateClassPair([instance class], replacementClassName, 0);
+    Class replacementClass = objc_allocateClassPair(object_getClass(instance), replacementClassName, 0);
     objc_registerClassPair(replacementClass);
     
     Method origMethod = class_getInstanceMethod(object_getClass(instance), targetSEL);
@@ -48,6 +48,7 @@ void hookInstance(id instance, SEL targetSEL, IMP replacementFp, IMP* origFp) {
     if([className containsString:@"_instanceHook_"]){
         baseClassName = [NSMutableString stringWithString:[[className componentsSeparatedByString:@"_instanceHook_"] objectAtIndex:0]];
     }
+    
     Method clsOrigMethod = class_getInstanceMethod(objc_getClass(baseClassName.cString), @selector(class));
     
     *((IMP*)(&clsOrig)) = method_getImplementation(clsOrigMethod);
